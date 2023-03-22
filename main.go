@@ -1,5 +1,10 @@
 package main
 
+import (
+	"github.com/Jakobaune/minyr/yr"
+)
+
 func main() {
-	average()
+	// yr.Average()
+	yr.Konverter()
 }

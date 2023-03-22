@@ -1,4 +1,4 @@
-package main
+package yr
 
 import (
 	"bufio"
@@ -14,7 +14,16 @@ import (
 
 // Main-funksjonen åpner en input-fil for lesing, oppretter en output-fil for skriving,
 // og skriver konvertert data til output-filen.
-func main() {
+func Konverter() {
+	// Sjekk om filen allerede finnes
+	if _, err := os.Stat("Resultat.txt"); err == nil {
+		var input string
+		fmt.Print("Filen finnes allerede. Vil du opprette en ny fil? (ja/nei): ")
+		fmt.Scanln(&input)
+		if input == "nei" {
+			return // avslutt funksjonen uten å opprette en ny fil
+		}
+	}
 	// Åpne input-filen for lesing
 	file, err := os.Open("kjevik-temp-celsius-20220318-20230318.csv")
 	// Håndter eventuelle feil
@@ -116,7 +125,7 @@ func convertLastField(lastField string) (string, error) {
 	return fmt.Sprintf("%.1f", fahrenheit), nil
 }
 
-func average() {
+func Average() {
 	// Open the csv file
 	file, err := os.OpenFile("kjevik-temp-celsius-20220318-20230318.csv", os.O_RDONLY, 0644)
 	if err != nil {
@@ -126,6 +135,7 @@ func average() {
 
 	// Read the lines from the csv file
 	scanner := bufio.NewScanner(file)
+
 	var sum float64
 	count := 0
 	for scanner.Scan() {
@@ -151,5 +161,15 @@ func average() {
 	average := sum / float64(count)
 	average = math.Round(average*100) / 100 // round to two decimal places
 
-	fmt.Printf("Gjennomsnittlig temperatur: %.2f°C\n", average)
+	fmt.Println("Vil du skrive ut temperaturen i grader Celsius eller Fahrenheit? (c/f)")
+	var choice string
+	fmt.Scanln(&choice)
+	if choice == "c" {
+		fmt.Printf("Gjennomsnittlig temperatur: %.2f°C\n", average)
+	} else if choice == "f" {
+		fahrenheit := conv.CelsiusToFahrenheit(average)
+		fmt.Printf("Gjennomsnittlig temperatur: %.2f°F\n", fahrenheit)
+	} else {
+		fmt.Println("Ugyldig valg")
+	}
 }

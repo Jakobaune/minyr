@@ -1,4 +1,4 @@
-module example.com/mod
+module github.com/Jakobaune/minyr
 
 go 1.20
 
