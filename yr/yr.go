@@ -173,3 +173,17 @@ func Average() {
 		fmt.Println("Ugyldig valg")
 	}
 }
+func Terminal() {
+	fmt.Println("Hvilken funksjon vil du kjøre?(average/konverter)")
+
+	var input string
+	fmt.Scanln(&input)
+
+	if input == "average" {
+		Average()
+	} else if input == "konverter" {
+		Konverter()
+	} else {
+		fmt.Println("Ugyldig input")
+	}
+}

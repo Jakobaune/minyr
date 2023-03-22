@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	// yr.Average()
-	yr.Konverter()
+	yr.Terminal()
 }
