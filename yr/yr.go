@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -115,41 +116,40 @@ func convertLastField(lastField string) (string, error) {
 	return fmt.Sprintf("%.1f", fahrenheit), nil
 }
 
-func average(scanner *bufio.Scanner, writer *bufio.Writer, unit string) {
-	var sum, count float64
-
-	// Loop over all lines in the input file
-	for scanner.Scan() {
-		// Parse the temperature value from the last field in the line
-		data := scanner.Text()
-		fields := strings.Split(data, ";")
-		lastField := fields[len(fields)-1]
-		temperature, err := strconv.ParseFloat(lastField, 64)
-		if err != nil {
-			// Ignore lines with invalid temperature values
-			continue
-		}
-
-		// Accumulate the sum and count for the average calculation
-		sum += temperature
-		count++
-	}
-
-	// Calculate the average temperature
-	average := sum / count
-
-	// Print the result to the output file
-	var outputLine string
-	if unit == "c" {
-		outputLine = fmt.Sprintf("Gjennomsnittstemperatur for perioden: %.1f °C", average)
-	} else if unit == "f" {
-		averageF := conv.CelsiusToFahrenheit(average)
-		outputLine = fmt.Sprintf("Gjennomsnittstemperatur for perioden: %.1f °F", averageF)
-	} else {
-		outputLine = "Ugyldig enhet valgt. Velg 'c' eller 'f'."
-	}
-	_, err := writer.WriteString(outputLine + "\n")
+func average() {
+	// Open the csv file
+	file, err := os.OpenFile("kjevik-temp-celsius-20220318-20230318.csv", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
+
+	// Read the lines from the csv file
+	scanner := bufio.NewScanner(file)
+	var sum float64
+	count := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		if count == 0 {
+			count++
+			continue // ignore header line
+		}
+		fields := strings.Split(line, ";")
+		if len(fields) != 4 {
+			log.Fatalf("unexpected number of fields in line %d: %d", count, len(fields))
+		}
+		if fields[3] == "" {
+			continue // ignore line with empty temperature field
+		}
+		temperature, err := strconv.ParseFloat(fields[3], 64)
+		if err != nil {
+			log.Fatalf("could not parse temperature in line %d: %s", count, err)
+		}
+		sum += temperature
+		count++
+	}
+	average := sum / float64(count)
+	average = math.Round(average*100) / 100 // round to two decimal places
+
+	fmt.Printf("Gjennomsnittlig temperatur: %.2f°C\n", average)
 }
