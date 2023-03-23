@@ -114,7 +114,7 @@ func Konverter() {
 	writer.Flush()
 }
 
-func convertLastField(lastField string) (string, error) {
+func ConvertLastField(lastField string) (string, error) {
 	celsius, err := strconv.ParseFloat(lastField, 64)
 	if err != nil {
 		return "", err
@@ -171,19 +171,5 @@ func Average() {
 		fmt.Printf("Gjennomsnittlig temperatur: %.2f°F\n", fahrenheit)
 	} else {
 		fmt.Println("Ugyldig valg")
-	}
-}
-func Terminal() {
-	fmt.Println("Hvilken funksjon vil du kjøre?(average/konverter)")
-
-	var input string
-	fmt.Scanln(&input)
-
-	if input == "average" {
-		Average()
-	} else if input == "konverter" {
-		Konverter()
-	} else {
-		fmt.Println("Ugyldig input")
 	}
 }
