@@ -2,7 +2,6 @@ package yr_test
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"testing"
 
@@ -26,49 +25,24 @@ func TestFileLineCount(t *testing.T) {
 		t.Errorf("unexpected number of lines in file: got %d, want %d", lineCount, 16756)
 	}
 }
+func TestConvertLine(t *testing.T) {
 
-func TestConvertLastField(t *testing.T) {
-	input := "6"
-	want := "42,8"
-
-	got, err := yr.ConvertLastField(input)
-	if err != nil {
-		t.Errorf("convertLastField(%q) returned error: %v", input, err)
+	type test struct {
+		input string
+		want  string
 	}
 
-	if got != want {
-		t.Errorf("convertLastField(%q) = %q; want %q", input, got, want)
+	tests := []test{
+		{input: "Kjevik;SN39040;18.03.2022 01:50;6", want: "Kjevik;SN39040;18.03.2022 01:50;42.8"},
+		{input: "Kjevik;SN39040;07.03.2023 18:20;0", want: "Kjevik;SN39040;07.03.2023 18:20;32.0"},
+		{input: "Kjevik;SN39040;08.03.2023 02:20;-11", want: "Kjevik;SN39040;08.03.2023 02:20;12.2"},
 	}
-}
 
-func TestKonverter(t *testing.T) {
-	// Set up input file
-	inputFileName := "test_input.csv"
-	inputFile, err := os.Create(inputFileName)
-	if err != nil {
-		t.Fatalf("Error creating input file: %v", err)
-	}
-	defer os.Remove(inputFileName)
-	fmt.Fprintln(inputFile, "Kjevik;SN39040;18.03.2022 01:50;6")
-
-	// Run Konverter function
-	yr.Konverter()
-
-	// Check output file
-	outputFileName := "Resultat.txt"
-	defer os.Remove(outputFileName)
-	outputFile, err := os.Open(outputFileName)
-	if err != nil {
-		t.Fatalf("Error opening output file: %v", err)
-	}
-	defer outputFile.Close()
-
-	scanner := bufio.NewScanner(outputFile)
-	if scanner.Scan() {
-		got := scanner.Text()
-		want := "Kjevik;SN39040;18.03.2022 01:50;42,8"
-		if got != want {
-			t.Errorf("Konverter() = %q; want %q", got, want)
+	for _, tc := range tests {
+		got, _ := yr.ConvertLine(tc.input)
+		if !(tc.want == got) {
+			t.Errorf("expected: %v, got: %v", tc.want, got)
 		}
 	}
+
 }

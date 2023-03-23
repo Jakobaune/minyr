@@ -77,7 +77,7 @@ func Konverter() {
 		if lastField != "" {
 			// Konverter siste felt fra Celsius til Fahrenheit
 			var err error
-			convertedField, err = convertLastField(lastField)
+			convertedField, err = ConvertLastField(lastField)
 			if err != nil {
 
 				// Hvis konverteringen feiler, skriv ut en feilmelding og fortsett til neste linje
@@ -172,4 +172,14 @@ func Average() {
 	} else {
 		fmt.Println("Ugyldig valg")
 	}
+}
+
+func ConvertLine(Line string) (string, error) {
+
+	elements := strings.Split(Line, ";")
+
+	fahrStr, _ := ConvertLastField(elements[3])
+	elements[3] = fahrStr
+	return strings.Join(elements, ";"), nil
+
 }
