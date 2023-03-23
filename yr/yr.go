@@ -92,7 +92,7 @@ func Konverter() {
 
 		// Hvis linjen starter med "Data er", skriv ut metadata og kildeinformasjon
 		if data[0:7] == "Data er" {
-			outputLine = "Endring gjort av Jakob Aune"
+			outputLine = "Data er basert på gyldig data (per 18.03.2023) (CC BY 4.0) fra Meteorologisk institutt (MET);endringen er gjort av Jakob Aune"
 		} else {
 			// Hvis linjen ikke starter med "Data er", skriv ut de konverterte feltene
 
@@ -180,6 +180,12 @@ func ConvertLine(Line string) (string, error) {
 
 	fahrStr, _ := ConvertLastField(elements[3])
 	elements[3] = fahrStr
-	return strings.Join(elements, ";"), nil
 
+	if Line[0:7] == "Data er" {
+		return "Data er basert på gyldig data (per 18.03.2023) (CC BY 4.0) fra Meteorologisk institutt (MET);endringen er gjort av Jakob Aune", nil
+	} else {
+		// Hvis linjen ikke starter med "Data er", skriv ut de konverterte feltene
+
+		return strings.Join(elements, ";"), nil
+	}
 }
