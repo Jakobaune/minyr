@@ -45,5 +45,11 @@ func TestConvertLine(t *testing.T) {
 			t.Errorf("expected: %v, got: %v", tc.want, got)
 		}
 	}
-
+}
+func TestAverageCelcius(t *testing.T) {
+	expected := "gjennomsnittstemperatur 8.56"
+	result := yr.AverageCelcius()
+	if result != expected {
+		t.Errorf("expected %q but got %q", expected, result)
+	}
 }

@@ -189,3 +189,42 @@ func ConvertLine(Line string) (string, error) {
 		return strings.Join(elements, ";"), nil
 	}
 }
+
+func AverageCelcius() string {
+	// Open the csv file
+	file, err := os.OpenFile("kjevik-temp-celsius-20220318-20230318.csv", os.O_RDONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	// Read the lines from the csv file
+	scanner := bufio.NewScanner(file)
+
+	var sum float64
+	count := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		if count == 0 {
+			count++
+			continue // ignore header line
+		}
+		fields := strings.Split(line, ";")
+		if len(fields) != 4 {
+			log.Fatalf("unexpected number of fields in line %d: %d", count, len(fields))
+		}
+		if fields[3] == "" {
+			continue // ignore line with empty temperature field
+		}
+		temperature, err := strconv.ParseFloat(fields[3], 64)
+		if err != nil {
+			log.Fatalf("could not parse temperature in line %d: %s", count, err)
+		}
+		sum += temperature
+		count++
+	}
+	average := sum / float64(count)
+	average = math.Round(average*100) / 100 // round to two decimal places
+
+	return fmt.Sprintf("gjennomsnittstemperatur %.2f", average)
+}
